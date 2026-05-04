@@ -2,8 +2,11 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -22,26 +27,52 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Resolve release tag
+        id: release
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check existing release
+        id: existing_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${{ steps.release.outputs.tag }}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release ${{ steps.release.outputs.tag }} already exists."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        if: steps.existing_release.outputs.exists != 'true'
         run: npm ci
 
       - name: Run tests
+        if: steps.existing_release.outputs.exists != 'true'
         run: npm test
 
       - name: Build extension
+        if: steps.existing_release.outputs.exists != 'true'
         run: npm run build
 
       - name: Package extension
+        if: steps.existing_release.outputs.exists != 'true'
         run: |
           cd dist
           zip -r ../dnspilot.zip .
 
       - name: Create GitHub release
+        if: steps.existing_release.outputs.exists != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dnspilot.zip \
+          gh release create "${{ steps.release.outputs.tag }}" dnspilot.zip \
             --repo "$GITHUB_REPOSITORY" \
-            --title "DNSPilot ${GITHUB_REF_NAME#v}" \
+            --title "DNSPilot ${{ steps.release.outputs.tag }}" \
             --notes "Initial Chrome release." \
             --verify-tag
