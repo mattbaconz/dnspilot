@@ -8,6 +8,9 @@ dnspilot.zip
 *.pem
 *.key
 
+# Local planning docs
+dnspilot_docs/
+
 # Test and coverage output
 coverage/
 .vitest/
