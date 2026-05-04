@@ -1,0 +1,43 @@
+{
+  "name": "dnspilot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "DNSPilot browser extension for local DNS diagnostics.",
+  "keywords": [
+    "dns",
+    "dns-over-https",
+    "doh",
+    "chrome-extension",
+    "browser-extension",
+    "manifest-v3",
+    "dns-diagnostics",
+    "resolver",
+    "privacy",
+    "typescript",
+    "react"
+  ],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "release:check": "npm test && npm run build && npm audit",
+    "package:zip": "npm run build && powershell -NoProfile -Command \"if (Test-Path dnspilot.zip) { Remove-Item dnspilot.zip }; Compress-Archive -Path dist\\* -DestinationPath dnspilot.zip\""
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
+  }
+}
