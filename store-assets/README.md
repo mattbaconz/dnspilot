@@ -4,7 +4,8 @@ This folder tracks planned Chrome Web Store assets.
 
 ## Required Visuals To Prepare
 
-- 128x128 icon: already available at `public/icons/icon-128.png`
+- Transparent logo: already available at `public/icons/dnspilot-logo-transparent.png`
+- 128x128 extension icon: already available at `public/icons/icon-128.png`
 - screenshots showing:
   - DNS Check
   - Site Probe

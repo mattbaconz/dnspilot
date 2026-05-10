@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/icons/icon-128.png" width="96" height="96" alt="DNSPilot icon" />
+  <img src="public/icons/dnspilot-logo-transparent.png" width="96" height="96" alt="DNSPilot icon" />
 </p>
 
 # DNSPilot
